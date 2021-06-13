@@ -1,24 +1,42 @@
-{
-	"demandItems": [
-		{
-			"demandID": 0,
-			"medicineName": "Calpol",
-			"manufacture": "Glaxo SmithKline Pharmaceuticals Ltd",
-			"orderQuantity": "3*15",
-			"availableQuantity": "3*15",
-			"seller": "Dauji",
-			"mrp": "15.04",
-			"cost": "12"
-		},
-		{
-			"demandID": 0,
-			"medicineName": "Vicks Action 500 Advanced",
-			"manufacture": "Procter & Gamble",
-			"orderQuantity": "2*10",
-			"availableQuantity": "2*10",
-			"seller": "Dauji",
-			"mrp": "39.06",
-			"cost": "35"
-		}
-	]
-}
+ [
+	{
+		"demandID": 18,
+		"medicineName": "Calpol",
+		"manufacture": "Glaxo SmithKline Pharmaceuticals Ltd",
+		"orderQuantity": "3*15",
+		"availableQuantity": "3*15",
+		"seller": "Dauji",
+		"mrp": "15.04",
+		"cost": "12"
+	},
+	{
+		"demandID": 18,
+		"medicineName": "Honitus Syrup",
+		"manufacture": "Dabur",
+		"orderQuantity": "2",
+		"availableQuantity": "2",
+		"seller": "Om Sai",
+		"mrp": "96",
+		"cost": "70"
+	},
+	{
+		"demandID": 18,
+		"medicineName": "Vicks Action 500 Advanced",
+		"manufacture": "Procter & Gamble",
+		"orderQuantity": "2*10",
+		"availableQuantity": "2*10",
+		"seller": "Dauji",
+		"mrp": "39.06",
+		"cost": "35"
+	},
+	{
+		"demandID": 18,
+		"medicineName": "Benadryl Syrup",
+		"manufacture": "Johnson & Johnson Ltd",
+		"orderQuantity": "2",
+		"availableQuantity": "2",
+		"seller": "Om Sai",
+		"mrp": "118",
+		"cost": "95"
+	}
+]

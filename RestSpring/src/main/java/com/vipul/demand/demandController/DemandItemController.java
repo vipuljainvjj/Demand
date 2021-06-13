@@ -2,6 +2,7 @@ package com.vipul.demand.demandController;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,22 +16,35 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vipul.demand.Demand;
 import com.vipul.demand.DemandItem;
 import com.vipul.demand.DemandItemData;
 import com.vipul.demand.Exception.DemandItemNotFoundException;
+import com.vipul.demand.Exception.DemandNotFoundException;
 import com.vipul.demand.demandrepository.DemandItemRepository;
+import com.vipul.demand.demandrepository.DemandRepository;
 import com.vipul.demand.demandutil.DateUtil;
 
 @RestController
 class DemandItemController {
 	
 	@Autowired
+	DemandRepository demandRepo;
+	
+	@Autowired
 	DemandItemRepository dItemRepo;
 	
 	@GetMapping(value="demand/{date}/demanditems", produces=MediaType.APPLICATION_JSON_VALUE)
-	private Iterable<DemandItem> getAllDemandItems(@PathVariable String date ) {
+	private Map<Long, List<DemandItemData>> getAllDemandItems(@PathVariable String date ) {
+		date = date.replace("-", "/");
 		Date parseDate = DateUtil.formatDate(date);
-		return dItemRepo.findByDemandDate(parseDate);
+		List<DemandItem> demandItemList = dItemRepo.findByDemandDate(parseDate);
+		System.out.println(demandItemList.size());
+		List<DemandItemData> demandItemDataList = demandItemList.stream()
+																.map(DemandItem::getDemandItemData)
+																.collect(Collectors.toList());
+		return demandItemDataList.stream()
+								 .collect(Collectors.groupingBy(DemandItemData::getDemandID));
 	}
 	
 	@GetMapping(value="/demanditem/{id}")
