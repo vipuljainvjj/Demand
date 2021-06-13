@@ -12,20 +12,16 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vipul.demand.Demand;
 import com.vipul.demand.DemandData;
-import com.vipul.demand.DemandItem;
-import com.vipul.demand.DemandItemData;
 import com.vipul.demand.Exception.DemandNotFoundException;
 import com.vipul.demand.demandrepository.DemandItemRepository;
 import com.vipul.demand.demandrepository.DemandRepository;
+import com.vipul.demand.demandutil.DateUtil;
 
 @RestController
 public class DemandController {
@@ -45,9 +41,10 @@ public class DemandController {
 	}
 	
 	@GetMapping(value="/demand/{date}", produces=MediaType.APPLICATION_JSON_VALUE)
-	private DemandData getDemandByDate(@PathVariable Date date) {
+	private DemandData getDemandByDate(@PathVariable String date) {
 		System.out.println("get a demand request");
-		Demand demand = demandRepo.findByDate(date).orElseThrow(() -> new DemandNotFoundException());
+		Date parseDate = DateUtil.formatDate(date);
+		Demand demand = demandRepo.findByDate(parseDate).orElseThrow(() -> new DemandNotFoundException());
 		return demand.getDemandData();
 	}
 	

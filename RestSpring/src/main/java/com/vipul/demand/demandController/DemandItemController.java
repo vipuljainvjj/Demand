@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.vipul.demand.DemandItem;
 import com.vipul.demand.DemandItemData;
+import com.vipul.demand.Exception.DemandItemNotFoundException;
 import com.vipul.demand.demandrepository.DemandItemRepository;
+import com.vipul.demand.demandutil.DateUtil;
 
 @RestController
 class DemandItemController {
@@ -25,25 +27,30 @@ class DemandItemController {
 	@Autowired
 	DemandItemRepository dItemRepo;
 	
+	@GetMapping(value="demand/{date}/demanditems", produces=MediaType.APPLICATION_JSON_VALUE)
+	private Iterable<DemandItem> getAllDemandItems(@PathVariable String date ) {
+		Date parseDate = DateUtil.formatDate(date);
+		return dItemRepo.findByDemandDate(parseDate);
+	}
 	
-	@GetMapping(value="demand/{date}/demandItems", produces=MediaType.APPLICATION_JSON_VALUE)
-	private Iterable<DemandItem> getAllDemandItems(@PathVariable Date date ) {
-		return dItemRepo.findByDemandDate(date);
+	@GetMapping(value="/demanditem/{id}")
+	private DemandItemData getDemandItem(@PathVariable long id) {
+		DemandItem demandItem = dItemRepo.findById(id).orElseThrow( () -> new DemandItemNotFoundException());
+		return demandItem.getDemandItemData();
 	}
 	
 	@PostMapping(value="/demandItem", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	private ResponseEntity<DemandItemData> createDemandItem(@RequestBody List<DemandItemData> jsonInput ) {
-		
+	private ResponseEntity<List<DemandItemData>> createDemandItem(@RequestBody List<DemandItemData> jsonInput ) {
 		List<DemandItem> demandItems = jsonInput.stream()
 												.map(DemandItem::setDemandItem)
 												.collect(Collectors.toList());
 		demandItems = (List<DemandItem>) dItemRepo.saveAll(demandItems);
 
-		demandItems.stream()
-				   .map(DemandItem::getDemandItemData)
-				   .collect(Collectors.toList());
-
-		return new ResponseEntity<DemandItemData>(HttpStatus.CREATED);
+		return new ResponseEntity<List<DemandItemData>>(demandItems.stream()
+																   .map(DemandItem::getDemandItemData)
+																   .collect(Collectors.toList()), 
+														HttpStatus.CREATED
+		);
 	}	
 }
