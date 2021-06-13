@@ -29,7 +29,6 @@ public class DemandData extends RepresentationModel<DemandData> implements Seria
 	private Date date;
 	private double predictedAmount;
 	private double investedAmount;
-	private List<DemandItemData> demandItems;
 	
 	public long getDemandID() {
 		return demandID;
@@ -61,13 +60,5 @@ public class DemandData extends RepresentationModel<DemandData> implements Seria
 	
 	public void setInvestedAmount(double investedAmount) {
 		this.investedAmount = investedAmount;
-	}
-	
-	public void setDemandItems(List<DemandItemData> demandItems) {
-		this.demandItems = demandItems;
-	}
-	
-	public List<DemandItemData> getDemandItems() {
-		return demandItems;
 	}
 }

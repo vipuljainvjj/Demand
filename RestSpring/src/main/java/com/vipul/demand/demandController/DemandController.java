@@ -38,86 +38,32 @@ public class DemandController {
 	
 	@GetMapping(value="/demands", produces=MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public List<DemandData> testGet() {
-		System.out.println("Get Request");
+	private List<DemandData> getAllDemands() {
+		System.out.println("Get All Demand Request");
 		List<Demand> list = (List<Demand>) demandRepo.findAll();
 		return list.stream().map(Demand::getDemandData).collect(Collectors.toList());
 	}
 	
-	@GetMapping(value="/demand/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
-	public DemandData getDemand(@PathVariable long id) {
-		Demand demand = demandRepo.findById(id).orElseThrow(() -> new DemandNotFoundException());
-		return demand.getDemandData(); 
+	@GetMapping(value="/demand/{date}", produces=MediaType.APPLICATION_JSON_VALUE)
+	private DemandData getDemandByDate(@PathVariable Date date) {
+		System.out.println("get a demand request");
+		Demand demand = demandRepo.findByDate(date).orElseThrow(() -> new DemandNotFoundException());
+		return demand.getDemandData();
 	}
-	
-//	@GetMapping(value="/demand/{date}", produces=MediaType.APPLICATION_JSON_VALUE)
-//	public DemandData getDemandByDate(@PathVariable Date date) {
-//		Demand demand = demandRepo.findByDate(date).orElseThrow(() -> new DemandNotFoundException());
-//		return demand.getDemandData();
-//	}
 	
 	@PostMapping(value="/demand", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public ResponseEntity<DemandData> createPost(@RequestBody DemandData jsonInput) {
-		System.out.println("Post request");
+	private ResponseEntity<DemandData> createDemand(@RequestBody DemandData jsonInput) {
+		System.out.println("Create a demand request");
 		Demand demand = Demand.setDemand(jsonInput);
 		demand = demandRepo.save(demand);
-		
-		List<DemandItem> demandItems = jsonInput.getDemandItems()
-										.stream()
-										.map(DemandItem::setDemandItem)
-										.collect(Collectors.toList());
-		demandItems = (List<DemandItem>) demandItemRepo.saveAll(demandItems);
-		
-		// get POJO bean to return
-		DemandData demandData = demand.getDemandData();
-		demandData.setDemandItems(demandItems.stream()
-									 .map(DemandItem::getDemandItemData)
-									 .peek(dItemData -> dItemData.setDemandID(demandData.getDemandID()))
-									 .collect(Collectors.toList())
- 		);
-		return new ResponseEntity<DemandData>(demandData, HttpStatus.CREATED);
+		return new ResponseEntity<DemandData>(demand.getDemandData(), HttpStatus.CREATED);
 	}
 	
-	@PutMapping(value="/demand", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+	@DeleteMapping(value="/demand{id}", produces=MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public String testPut(@RequestBody DemandData jsonInput) {
-		System.out.println("Put Request");
-		return "";
-	}
-	
-	@DeleteMapping(value="/demand", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public String testDelete(@RequestBody DemandData jsonInput) {
+	private void deleteDemand(@PathVariable long id) {
 		System.out.println("Delete Mapping");
-		return "";
-	}
-	
-	@RequestMapping(value="/demand", method=RequestMethod.HEAD, consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public String testHead(@RequestBody DemandData jsonInput) {
-		System.out.println("Head Mapping");
-		return "";
-	}
-	
-	@RequestMapping(value="/demand", method=RequestMethod.PATCH, consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public String testPatch(@RequestBody DemandData jsonInput) {
-		System.out.println("Patch Mapping");
-		return "";
-	}
-	
-	@RequestMapping(value="/demand", method=RequestMethod.OPTIONS, consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public String testOptions(@RequestBody DemandData jsonInput) {
-		System.out.println("Options Mapping");
-		return "";
-	}
-	
-	@RequestMapping(value="/demand", method=RequestMethod.TRACE, consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public String testTrace(@RequestBody DemandData jsonInput) {
-		System.out.println("Trace Mapping");
-		return "";
+		demandRepo.deleteById(id);
 	}
 }
